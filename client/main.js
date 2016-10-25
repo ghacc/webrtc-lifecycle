@@ -7,7 +7,7 @@ const ICE_SERVERS = {iceServers: [{urls: 'stun:stun.l.google.com:19302'}]};
 // Peer connection options
 const connectionOptions = {'optional': [{'DtlsSrtpKeyAgreement': true}, {'RtpDataChannels': true }]};
 // Websocket with the signalling server
-const SOCKET = new WebSocket('wss://localhost:8443/');
+const SOCKET = new WebSocket('wss://snf-726404.vm.okeanos.grnet.gr:8443/');
 // Array of possible message types (from signalling server)
 const SIGNAL_MESSAGE_TYPES = ['answer', 'offer', 'new-ice-candidate', 'register'];
 // A map of all the connection that the client holds
