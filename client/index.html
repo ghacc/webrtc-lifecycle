@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+	<title>WebRTC lifecycle</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.css">
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<h1 class="ui center aligned header">WebRTC Lifecycle</h1>
+	<div class="ui divider"></div>
+	<div class="ui three column grid">
+	  <div class="column">
+	  	<h3 class="ui aligned header">Signalling Server</h3>
+			<div class="ui divider"></div>
+			<div class="ui list">
+			  <div class="item">
+			    <div class="header">New York City</div>
+			    A lovely city
+			  </div>
+			</div>
+	  </div>
+	  <div class="column">
+	  	<h3 id="me" class="ui aligned header"></h3>
+			<div id="tooltip" class="ui pointing label">
+				 Click to send offer!
+		 </div>
+			<div class="ui divider"></div>
+	  </div>
+	  <div class="column">
+	  	<h3 class="ui aligned header"></h3>
+			<div class="ui divider"></div>
+	  </div>
+</div>
+	<script src="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.js"></script>
+	<script src="lib/adapter.js"></script>
+	<script src="util.js"></script>
+	<script src="main.js"></script>
+	<script src="ui.js"></script>
+</body>
+</html>
