@@ -20,6 +20,15 @@ SOCKET.addEventListener('open', function() {
   registerWithServer();
 });
 
+SOCKET.addEventListener('error', function(er) {
+  l.e('Connection with signalling server errored');
+  console.dir(er);
+});
+
+SOCKET.addEventListener('close', function() {
+  l.e('Connection with singalling server closed');
+});
+
 // Here we handle our communication with the signalling server. The signalling
 // may notify us for a new offer or a new ice candidate.
 SOCKET.addEventListener('message', function(e) {
@@ -33,21 +42,21 @@ SOCKET.addEventListener('message', function(e) {
   }
   switch (data.type) {
     case 'offer':
-
+      createAnswer(data);
       break;
     case 'answer':
-
+      // Ti kano otan pairnw apantisi se offer?
+      handleAnswer(data);
       break;
     case 'new-ice-candidate':
-
+      handleRemoteIceCandidate(data);
       break;
-    default:
-      l.w("Message from signalling server does contain proper type");
-      l.w('Reached unreachable code');
-      console.dir(data);
+    case 'relay-message':
+      addLog(server, data.content);
+      break;
   }
   if (data.targetUser !== MY_ID && data.sdp) {
-    createAnswer(new RTCSessionSescription(sdp));
+    createAnswer(new RTCSessionDescription(sdp));
   }
 });
 
@@ -63,6 +72,7 @@ SOCKET.addEventListener('close', function() {
 
 function startConnection() {
   let peerConnection = new RTCPeerConnection(ICE_SERVERS, connectionOptions);
+  peerConnection.onicecandidate = handleIceCandidateEvent;
   peerConnection.createDataChannel("datachannel", {reliable: false});
   l.i('Creating an RTC Session Description object that describes the generated offer');
   let offer = peerConnection.createOffer();
@@ -92,13 +102,14 @@ function startConnection() {
   });
 }
 
-function createAnswer(offer) {
+function createAnswer(data) {
   let peerConnection = new RTCPeerConnection(ICE_SERVERS, connectionOptions);
+  peerConnection.onicecandidate = handleIceCandidateEvent;
   peerConnection.createDataChannel("datachannel", {reliable: false});
   l.i('Creating an RTC Session Description object for received offer');
 
   // Set remote description from offer received
-  peerConnection.setRemoteDescription(offer).then(function() {
+  peerConnection.setRemoteDescription(data.sdp).then(function() {
     return peerConnection.createAnswer();
   }, function() {
     l.e('Failed to set remote description');
@@ -117,7 +128,7 @@ function createAnswer(offer) {
     let message = {
       type: "answer",
       originUser: MY_ID,
-      targetUser: "",
+      targetUser: data.originUser,
       sdp: peerConnection.localDescription
     };
     console.dir(message);
@@ -126,6 +137,10 @@ function createAnswer(offer) {
     l.e('Failed to set local description');
     console.dir(er);
   });
+}
+
+function handleAnswer(data) {
+  // getPeerConnection.setRemoteDescription(new RTCSessionDescription(data.sdp));
 }
 
 // Once this client's ICE agent has a candidate, we must send it to the

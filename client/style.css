@@ -1,12 +1,5 @@
 body {
-  padding: 14px;
 }
 
 div {
-  border: 1px solid red;
-}
-
-#tooltip {
-  display: none;
-  position: absolute;
 }

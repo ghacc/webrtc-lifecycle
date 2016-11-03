@@ -6,32 +6,65 @@
 	<link rel="stylesheet" href="style.css">
 </head>
 <body>
-	<h1 class="ui center aligned header">WebRTC Lifecycle</h1>
-	<div class="ui divider"></div>
-	<div class="ui three column grid">
-	  <div class="column">
-	  	<h3 class="ui aligned header">Signalling Server</h3>
-			<div class="ui divider"></div>
-			<div class="ui list">
-			  <div class="item">
-			    <div class="header">New York City</div>
-			    A lovely city
-			  </div>
+	<header>
+		<div class="jumbotron">
+			<h1>WebRTC Lifecycle</h1>
+		</div>
+	</header>
+	<main>
+		<div class="container-fluid">
+			<div class="row"><!-- main row -->
+				<div id="server" class="col-sm-6"><!-- server column -->
+					<div class="row">
+						<h3 class="col-xs-12">Signalling Server</h3>
+					</div>
+					<div class="row">
+						<dl class="dl-horizontal">
+							<dt>08:30</dt>
+							<dd>Connecting</dd>
+						</dl>
+					</div>
+				</div><!-- server column -->
+				<div id="self" class="col-sm-6"><!-- self column -->
+					<div class="row">
+						<h3 class="col-xs-10"></h3>
+						<button class="btn btn-primary col-xs-2" type="submit">Connect</button>
+					</div>
+					<div class="row">
+						<dl class="dl-horizontal">
+
+						</dl>
+					</div>
+				</div><!-- self column -->
+			</div><!-- main row -->
+		</div>
+		<!-- <div class="ui two column grid">
+			<div id="server" class="column">
+				<h3 class="ui aligned header">Signalling Server</h3>
+				<div class="ui divider"></div>
+				<div class="ui list">
+					<div class="item">
+						<div class="header">New York City</div>
+						A lovely city
+					</div>
+				</div>
 			</div>
-	  </div>
-	  <div class="column">
-	  	<h3 id="me" class="ui aligned header"></h3>
-			<div id="tooltip" class="ui pointing label">
-				 Click to send offer!
-		 </div>
-			<div class="ui divider"></div>
-	  </div>
-	  <div class="column">
-	  	<h3 class="ui aligned header"></h3>
-			<div class="ui divider"></div>
-	  </div>
-</div>
-	<script src="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.js"></script>
+			<div id="self" class="column">
+				<div class="ui two column grid">
+					<h3 class="ui header username"></h3>
+					<button class="ui right floated primary button">Connect</button>
+				</div>
+				<div class="ui divider"></div>
+			</div>
+			<div class="column">
+				<h3 class="ui aligned header"></h3>
+				<div class="ui divider"></div>
+			</div>
+		</div> -->
+	</main>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+	<!-- <script src="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.js"></script> -->
 	<script src="lib/adapter.js"></script>
 	<script src="util.js"></script>
 	<script src="main.js"></script>
