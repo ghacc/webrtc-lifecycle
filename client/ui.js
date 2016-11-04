@@ -10,7 +10,8 @@ connectButton.addEventListener('mousedown', function() {
   l.i("Button clicked - trying to connect to websocket server");
   this.textContent = "Connecting..";
   this.disabled = true;
-  l.i("Starting websocket connection")
+  l.i("Starting websocket connection");
+  registerWithServer();
   startConnection();
 });
 

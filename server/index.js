@@ -25,21 +25,22 @@ let wss = new WsServer({
 wss.on('connection', function connection(ws) {
   console.log('A websocket connection established');
   ws.on('message', function incoming(message) {
+    let messageObj = JSON.parse(message);
     console.dir(message);
-    switch (message.type) {
+    switch (messageObj.type) {
       case 'register':
         console.log("Registering user " + message.user + " with the server.");
+        CLIENTS.set(message.user, ws);
         broadcast_message("Registering user " + message.user + " with the server.");
-        CLIENTS.add(message.user, ws);
         break;
       case 'offer':
-        CLIENTS.forEach(function each(client) {
+        broadcast_message('Sending offer from ' + message.originUser);
+        CLIENTS.forEach(function each(client, name) {
           if (client !== ws) {
-            broadcast_message('Sending offer from ' + message.originUser);
             client.send(message, function ack(er) {
               if (er) {
-                console.log('Error communicating with client. Removing..');
-                CLIENTS.remove(client);
+                console.log('Error communicating with client ' + name + '. Removing..');
+                CLIENTS.delete(client);
               }
             });
           }
@@ -50,18 +51,18 @@ wss.on('connection', function connection(ws) {
         CLIENTS.get(message.targetUser).send(message, function ack(er) {
           if (er) {
             console.log('Error communicating with client. Removing..');
-            CLIENTS.remove(client);
+            CLIENTS.delete(client);
           }
         });
         break;
       case 'new-ice-candidate':
         broadcast_message('Sending new ICE candidates from ' + message.originUser);
-        CLIENTS.forEach(function each(client) {
+        CLIENTS.forEach(function each(client, name) {
           if (client !== ws) {
             client.send(message, function ack(er) {
               if (er) {
-                console.log('Error communicating with client. Removing..');
-                CLIENTS.remove(client);
+                console.log('Error communicating with client ' + name + '. Removing..');
+                CLIENTS.delete(client);
               }
             });
           }
@@ -84,6 +85,8 @@ httpsServer.listen(cfg.securePort, function() {
 function broadcast_message(content) {
   let message = JSON.stringify({type: "relay-message", content: content});
   CLIENTS.forEach(function(client) {
-    client.send(message);
+    client.send(message, function ack(er) {
+      if (er) console.log(er);
+    });
   });
 }

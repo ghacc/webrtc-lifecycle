@@ -7,9 +7,10 @@ const ICE_SERVERS = {iceServers: [{urls: 'stun:stun.l.google.com:19302'}]};
 // Peer connection options
 const connectionOptions = {'optional': [{'DtlsSrtpKeyAgreement': true}, {'RtpDataChannels': true }]};
 // Websocket with the signalling server
-const SOCKET = new WebSocket('wss://snf-726404.vm.okeanos.grnet.gr:8443/');
+// const SOCKET = new WebSocket('wss://snf-726404.vm.okeanos.grnet.gr:8443/');
+const SOCKET = new WebSocket('wss://localhost:8443/');
 // Array of possible message types (from signalling server)
-const SIGNAL_MESSAGE_TYPES = ['answer', 'offer', 'new-ice-candidate', 'register'];
+const SIGNAL_MESSAGE_TYPES = ['answer', 'offer', 'new-ice-candidate', 'register', 'relay-message'];
 // A map of all the connection that the client holds
 const CONNECTIONS = new Map();
 // An id for the client
@@ -17,7 +18,6 @@ const MY_ID = uid.get();
 
 SOCKET.addEventListener('open', function() {
   l.i('Connection with signalling server open');
-  registerWithServer();
 });
 
 SOCKET.addEventListener('error', function(er) {
@@ -73,7 +73,11 @@ SOCKET.addEventListener('close', function() {
 function startConnection() {
   let peerConnection = new RTCPeerConnection(ICE_SERVERS, connectionOptions);
   peerConnection.onicecandidate = handleIceCandidateEvent;
-  peerConnection.createDataChannel("datachannel", {reliable: false});
+  let dc = peerConnection.createDataChannel("datachannel", {reliable: false});
+  dc.onopen = handleOpenDirectConnection;
+  dc.onmessage = handleDirectMessage;
+  dc.onclose = handleCloseDirectConnection;
+  dc.onerror = handleErrorDirectConnection;
   l.i('Creating an RTC Session Description object that describes the generated offer');
   let offer = peerConnection.createOffer();
 
@@ -92,7 +96,7 @@ function startConnection() {
     let message = {
       type: "offer",
       originUser: MY_ID,
-      sdp: offer
+      sdp: peerConnection.localDescription
     };
     console.dir(message);
     SOCKET.send(JSON.stringify(message));
@@ -105,7 +109,11 @@ function startConnection() {
 function createAnswer(data) {
   let peerConnection = new RTCPeerConnection(ICE_SERVERS, connectionOptions);
   peerConnection.onicecandidate = handleIceCandidateEvent;
-  peerConnection.createDataChannel("datachannel", {reliable: false});
+  let dc = peerConnection.createDataChannel("datachannel", {reliable: false});
+  dc.onopen = handleOpenDirectConnection;
+  dc.onmessage = handleDirectMessage;
+  dc.onclose = handleCloseDirectConnection;
+  dc.onerror = handleErrorDirectConnection;
   l.i('Creating an RTC Session Description object for received offer');
 
   // Set remote description from offer received
@@ -186,4 +194,21 @@ function registerWithServer() {
     l.e('Failed to register with server');
     console.dir(ex);
   }
+}
+
+function handleDirectMessage(e) {
+  addLog(self, e.data);
+}
+
+function handleOpenDirectConnection() {
+  addLog(self, 'Direct channel established!');
+  console.log(this);
+}
+
+function handleCloseDirectConnection() {
+  addLog(self, 'Direct channel closed!');
+}
+
+function handleErrorDirectConnection() {
+  addLog(self, 'Error in direct connection!');
 }
